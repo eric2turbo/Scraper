@@ -33,7 +33,7 @@ app.set("view engine", "handlebars");
 app.use(express.static("public"));
 
 // Database configuration with mongoose
-mongoose.connect("mongodb://localhost/week18day3mongoose");
+mongoose.connect("mongodb://localhost/mongooseScraper");
 var db = mongoose.connection;
 
 // Show any mongoose errors
@@ -44,4 +44,87 @@ db.on("error", function(error) {
 // Once logged in to the db through mongoose, log a success message
 db.once("open", function() {
     console.log("Mongoose connection successful.");
+});
+
+// Routes
+// Scrape Route Root
+app.get("/", function(req, res) {
+    request("http://www.echojs.com/", function(error, response, html) {
+        var $ = cheerio.load(html);
+
+        $("article h2").each(function(i, element) {
+            var result = {};
+
+            result.title = $(this).children("a").text();
+            result.link = $(this).children("a").attr("href");
+        });
+
+        var entry = new Article(result);
+
+        entry.save(function(err, doc) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(doc);
+            }
+        });
+    });
+    res.redirect("/articles");
+});
+
+// Shows all articles
+app.get("/articles", function(req, res) {
+    Article.find({}, function(error, doc) {
+        if (error) {
+            console.log(error);
+        } else {
+            res.json(doc);
+        }
+    });
+});
+
+// Grab Article by ObjectId
+app.get("/articles/:id", function(req, res) {
+    Article.findOne({ "_id": req.params.id }).populate("note")
+        .exec(function(error, doc) {
+            if (error) {
+                console.log(error);
+            } else {
+                res.json(doc);
+            }
+        });
+});
+
+// Create new note or replace an existing note
+app.post("/articles/:id", function(req, res) {
+    // Create a new note and pass the req.body to the entry
+    var newNote = new Note(req.body);
+
+    // And save the new note the db
+    newNote.save(function(error, doc) {
+        // Log any errors
+        if (error) {
+            console.log(error);
+        }
+        // Otherwise
+        else {
+            // Use the article id to find and update it's note
+            Article.findOneAndUpdate({ "_id": req.params.id }, { "note": doc._id })
+                // Execute the above query
+                .exec(function(err, doc) {
+                    // Log any errors
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        // Or send the document to the browser
+                        res.send(doc);
+                    }
+                });
+        }
+    });
+});
+
+// Listen on port 3000
+app.listen(3000, function() {
+    console.log("App running on port 3000!");
 });
