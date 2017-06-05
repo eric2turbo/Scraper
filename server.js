@@ -16,6 +16,7 @@ mongoose.Promise = Promise;
 
 // Initialize Express
 var app = express();
+var PORT = 3000 || process.env.PORT;
 
 // Use morgan and body parser with our app
 app.use(logger("dev"));
@@ -49,6 +50,10 @@ db.once("open", function() {
 // Routes
 // Scrape Route Root
 app.get("/", function(req, res) {
+    res.redirect("/articles");
+})
+
+app.get("/scrape", function(req, res) {
     request("http://www.echojs.com/", function(error, response, html) {
         var $ = cheerio.load(html);
 
@@ -57,7 +62,7 @@ app.get("/", function(req, res) {
 
             result.title = $(this).children("a").text();
             result.link = $(this).children("a").attr("href");
-
+            // result.saved = false;
 
             var entry = new Article(result);
 
@@ -69,9 +74,8 @@ app.get("/", function(req, res) {
                 }
             });
         });
-
+        res.redirect("/articles");
     });
-    res.redirect("/articles");
 });
 
 // Shows all articles
@@ -127,7 +131,37 @@ app.post("/articles/:id", function(req, res) {
     });
 });
 
+app.get("/saved", function(req, res) {
+    Article.find({}, function(error, doc) {
+        if (error) {
+            console.log(error);
+        } else {
+            var hbsObject = { stories: doc };
+            res.render("saved", hbsObject);
+        }
+    });
+});
+
+app.post("/saved/:id", function(req, res) {
+
+    // Use the article id to find and update saved status
+    Article.findOneAndUpdate({ "_id": req.params.id }, { "saved": req.body.saved })
+        // Execute the above query
+        .exec(function(err, doc) {
+            // Log any errors
+            if (err) {
+                console.log(err);
+            } else {
+                // Or send the document to the browser
+                res.redirect("/saved");
+            }
+        });
+
+});
+
+
+
 // Listen on port 3000
-app.listen(3000, function() {
+app.listen(PORT, function() {
     console.log("App running on port 3000!");
 });

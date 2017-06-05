@@ -1,0 +1,24 @@
+<h2> Saved Articles</h2>
+
+<div id="wrapper">
+    <div id="articles">
+        {{#each stories}}
+            {{#if this.saved}}
+            <p data-id={{_id}}> 
+                {{title}}
+                <br />
+                {{link}}
+            </p>
+            <button class="btn btn-danger savedchange" data-id='{{_id}}'>
+                Remove Article
+            </button>
+            {{/if}}
+        {{/each}}
+    </div>
+    <div id="notes">
+               
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="app.js"></script>
+</div>

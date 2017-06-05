@@ -59,3 +59,38 @@ $(document).on("click", "#savenote", function() {
     $("#titleinput").val("");
     $("#bodyinput").val("");
 });
+
+$(document).on("click", ".savedchange", function() {
+    var thisId = $(this).attr("data-id");
+    if ($(this).attr("saved") === "true") {
+        // console.log("======== saved true case =======");
+        $(this).attr("saved", "false");
+        $(this).text("Save Article");
+        $.ajax({
+            method: "POST",
+            url: "/saved/" + thisId,
+            data: {
+                saved: false
+            }
+        }).done(function(data) {
+            // $(this).attr("saved", "false");
+            // $(this).text("Save Article");
+            // console.log(data);
+        });
+    } else {
+        console.log("====== else saved attr====value " + $(this).attr("saved"));
+        $(this).attr("saved", "true");
+        $(this).text("Remove Article");
+        $.ajax({
+            method: "POST",
+            url: "/saved/" + thisId,
+            data: {
+                saved: true
+            }
+        }).done(function(data) {
+            // $(this).attr("saved", "true");
+            // $(this).text("Remove Article");
+            // console.log(data);
+        });
+    }
+});
