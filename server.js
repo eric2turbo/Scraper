@@ -34,11 +34,9 @@ app.set("view engine", "handlebars");
 app.use(express.static("public"));
 
 // Database configuration with mongoose
-if (process.env.MONGODB_URI) {
-    mongoose.connect(process.env.MONGODB_URI);
-} else {
-    mongoose.connect("mongodb://localhost/mongooseScraper");
-}
+
+mongoose.connect("mongodb://heroku_ds875qrg:bbhrk0pap9fp815elksa41mdts@ds161121.mlab.com:61121/heroku_ds875qrg" || "mongodb://localhost/mongooseScraper");
+
 
 var db = mongoose.connection;
 
@@ -183,5 +181,5 @@ app.post("/delete/:id", function(req, res) {
 
 // Listen on port 3000
 app.listen(PORT, function() {
-    console.log("App running on port " + PORT + " !");
+    console.log("App running on port 3000 !");
 });
