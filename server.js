@@ -159,9 +159,24 @@ app.post("/saved/:id", function(req, res) {
 
 });
 
+// To delete the note for an article
+app.post("/delete/:id", function(req, res) {
+    Article.findById(req.params.id, function(err, doc) {
+        console.log("doc is ==============" + doc);
+        if (err) {
+            console.log(err);
+        } else {
+
+            Note.findByIdAndRemove(doc.note, function(err, docu) {
+                res.redirect("/saved");
+            });
+        }
+    });
+});
+
 
 
 // Listen on port 3000
 app.listen(PORT, function() {
-    console.log("App running on port 3000!");
+    console.log("App running on port " + PORT + " !");
 });

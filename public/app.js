@@ -20,6 +20,8 @@ $(document).on("click", "p", function() {
         $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
         // A button to submit a new note, with the id of the article saved to it
         $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
+        // A button to remove the note
+        $("#notes").append("<button data-id='" + data._id + "' id='deletenote'>Delete Note</button>");
 
         // If there's a note in the article
         if (data.note) {
@@ -60,6 +62,24 @@ $(document).on("click", "#savenote", function() {
     $("#bodyinput").val("");
 });
 
+// Deletenote button
+$(document).on("click", "#deletenote", function() {
+    var thisId = $(this).attr("data-id");
+
+    $.ajax({
+        method: "POST",
+        url: "/delete/" + thisId
+    });
+    // .done(function(data) {
+    //     $("#notes").empty();
+    // });
+    // Remove values in the input and textarea.
+    $("#titleinput").val("");
+    $("#bodyinput").val("");
+});
+
+
+// Change saved status
 $(document).on("click", ".savedchange", function() {
     var thisId = $(this).attr("data-id");
     if ($(this).attr("saved") === "true") {
@@ -73,12 +93,9 @@ $(document).on("click", ".savedchange", function() {
                 saved: false
             }
         }).done(function(data) {
-            // $(this).attr("saved", "false");
-            // $(this).text("Save Article");
-            // console.log(data);
+            console.log(data);
         });
     } else {
-        console.log("====== else saved attr====value " + $(this).attr("saved"));
         $(this).attr("saved", "true");
         $(this).text("Remove Article");
         $.ajax({
@@ -88,9 +105,7 @@ $(document).on("click", ".savedchange", function() {
                 saved: true
             }
         }).done(function(data) {
-            // $(this).attr("saved", "true");
-            // $(this).text("Remove Article");
-            // console.log(data);
+            console.log(data);
         });
     }
 });
