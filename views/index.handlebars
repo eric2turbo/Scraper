@@ -1,0 +1,23 @@
+<h2> Headlines </h2>
+
+<div id="wrapper">
+    <div id="articles">
+        {{#each stories}}
+        <p data-id={{_id}}> 
+            {{title}}
+            <br />
+            {{link}}
+        </p>
+        {{/each}}
+    </div>
+    <div id="notes">
+        {{#each stories}}
+            <h2> {{title}} </h2>
+
+
+        {{/each}}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="app.js"></script>
+</div>

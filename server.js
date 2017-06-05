@@ -57,17 +57,19 @@ app.get("/", function(req, res) {
 
             result.title = $(this).children("a").text();
             result.link = $(this).children("a").attr("href");
+
+
+            var entry = new Article(result);
+
+            entry.save(function(err, doc) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(doc);
+                }
+            });
         });
 
-        var entry = new Article(result);
-
-        entry.save(function(err, doc) {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log(doc);
-            }
-        });
     });
     res.redirect("/articles");
 });
@@ -78,7 +80,8 @@ app.get("/articles", function(req, res) {
         if (error) {
             console.log(error);
         } else {
-            res.json(doc);
+            var hbsObject = { stories: doc };
+            res.render("index", hbsObject);
         }
     });
 });
