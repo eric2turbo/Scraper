@@ -46,15 +46,19 @@ $(document).on("click", "#savenote", function() {
                 // Value taken from title input
                 title: $("#titleinput").val(),
                 // Value taken from note textarea
-                body: $("#bodyinput").val()
+                body: $("#bodyinput").val(),
+                articleId: thisId
             }
         })
         // With that done
         .done(function(data) {
             // Log the response
             console.log(data);
+            var newDiv = $("<div class='comment'>");
+            newDiv.append("<div data-id='" + data._id + "'>");
+            $("#comments").append(newDiv);
             // Empty the notes section
-            $("#notes").empty();
+            // $("#notes").empty();
         });
 
     // Also, remove the values entered in the input and textarea for note entry
@@ -67,12 +71,12 @@ $(document).on("click", "#deletenote", function() {
     var thisId = $(this).attr("data-id");
 
     $.ajax({
-        method: "POST",
-        url: "/delete/" + thisId
-    });
-    // .done(function(data) {
-    //     $("#notes").empty();
-    // });
+            method: "POST",
+            url: "/delete/" + thisId
+        })
+        .done(function(data) {
+            $("#notes").empty();
+        });
     // Remove values in the input and textarea.
     $("#titleinput").val("");
     $("#bodyinput").val("");
