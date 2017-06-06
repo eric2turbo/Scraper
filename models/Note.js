@@ -8,6 +8,10 @@ var NoteSchema = new Schema({
     },
     body: {
         type: String
+    },
+    articleId: {
+        type: String,
+        required: true
     }
 });
 
