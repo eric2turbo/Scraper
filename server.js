@@ -57,14 +57,14 @@ app.get("/", function(req, res) {
 })
 
 app.get("/scrape", function(req, res) {
-    request("http://www.echojs.com/", function(error, response, html) {
+    request("https://www.reddit.com/r/lakers/new", function(error, response, html) {
         var $ = cheerio.load(html);
 
-        $("article h2").each(function(i, element) {
+        $("p.title").each(function(i, element) {
             var result = {};
 
-            result.title = $(this).children("a").text();
-            result.link = $(this).children("a").attr("href");
+            result.title = $(this).text();
+            result.link = $(element).children().attr("href");
             // result.saved = false;
 
             var entry = new Article(result);
